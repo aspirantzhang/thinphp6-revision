@@ -1,5 +1,6 @@
 {
   "name": "aspirantzhang/octopus-revision",
+  "description": "Add revision feature for Octopus.",
   "type": "library",
   "version": "0.0.1-dev",
   "license": "MIT",
