@@ -1,2 +1,4 @@
+ignore:
+  - "src/Service.php"
 coverage:
   range: "60...90"
