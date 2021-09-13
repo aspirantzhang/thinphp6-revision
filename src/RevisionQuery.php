@@ -13,6 +13,7 @@ class RevisionQuery
         if (empty($tableName) || empty($recordId)) {
             throw new \InvalidArgumentException('Table name and record id should not be empty.');
         }
+
         $list = Db::name('revision')
             ->where('table_name', $tableName)
             ->where('original_id', $recordId)
@@ -22,6 +23,7 @@ class RevisionQuery
                 'list_rows' => $perPage,
                 'page' => $page
             ])->toArray();
-        return $list['data'] ?? [];
+
+        return $list['data'] ?? $list['dataSource'] ?? [];
     }
 }
