@@ -46,12 +46,12 @@ END
 
     public function testRevisionQueryDefaultPage()
     {
-        $result = (new RevisionQuery())->query();
+        $result = (new RevisionQuery())->query('revision_test', 100);
         $this->assertStringStartsWith('[{"id":20,"table_name":"revision_test","original_id":100,"title":"revision_test_19', json_encode($result));
     }
     public function testRevisionQuerySpecificPageAndPerPage()
     {
-        $result = (new RevisionQuery())->query(3, 2);
+        $result = (new RevisionQuery())->query('revision_test', 100, 3, 2);
         $this->assertEquals(count($result), 2);
         $this->assertStringStartsWith('[{"id":16', json_encode($result));
     }
