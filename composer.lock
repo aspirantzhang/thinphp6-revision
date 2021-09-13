@@ -4,8 +4,55 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "218ff8b4d4a3cfe7aa3192279d147954",
+    "content-hash": "7f2f32b5a85e28097c794bf2fe0ae088",
     "packages": [
+        {
+            "name": "aspirantzhang/octopus-helper",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aspirantzhang/octopus-helper.git",
+                "reference": "47b72d08a7081b4b6a006daf3210d33a8d637eb7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aspirantzhang/octopus-helper/zipball/47b72d08a7081b4b6a006daf3210d33a8d637eb7",
+                "reference": "47b72d08a7081b4b6a006daf3210d33a8d637eb7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4.0",
+                "topthink/framework": "^6.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.4",
+                "phpstan/phpstan": "^0.12.93",
+                "phpunit/phpunit": "^9.5"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "aspirantzhang",
+                    "email": "admin@aspirantzhang.com"
+                }
+            ],
+            "description": "Provides some common functions for systems built with ThinkPHP6.",
+            "support": {
+                "issues": "https://github.com/aspirantzhang/octopus-helper/issues",
+                "source": "https://github.com/aspirantzhang/octopus-helper/tree/main"
+            },
+            "time": "2021-07-28T11:34:38+00:00"
+        },
         {
             "name": "league/flysystem",
             "version": "1.1.5",
@@ -2852,7 +2899,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "aspirantzhang/octopus-helper": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

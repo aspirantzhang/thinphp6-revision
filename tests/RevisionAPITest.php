@@ -6,7 +6,7 @@ namespace aspirantzhang\octopusRevision;
 
 use think\facade\Db;
 
-class RevisionQueryTest extends TestCase
+class RevisionAPITest extends TestCase
 {
     public static function setUpBeforeClass(): void
     {
@@ -44,15 +44,22 @@ END
         Db::name('revision')->insertAll($moreRecords);
     }
 
-    public function testRevisionQueryDefaultPage()
+    public function testRevisionAPIDefaultPage()
     {
-        $result = (new RevisionQuery())->query('revision_test', 100);
-        $this->assertStringStartsWith('[{"id":20,"table_name":"revision_test","original_id":100,"title":"revision_test_19', json_encode($result));
+        $result = (new RevisionAPI())->listAPI('revision_test', 100);
+        $this->assertStringStartsWith('{"success":true,"message":"","data":{"dataSource":[{"id":20,"table_name":"revision_test","original_id":100,"title":"revision_test_19"', json_encode($result));
     }
-    public function testRevisionQuerySpecificPageAndPerPage()
+
+    public function testRevisionAPISpecificPageAndPerPage()
     {
-        $result = (new RevisionQuery())->query('revision_test', 100, 3, 2);
-        $this->assertEquals(count($result), 2);
-        $this->assertStringStartsWith('[{"id":16', json_encode($result));
+        $result = (new RevisionAPI())->listAPI('revision_test', 100, 3, 2);
+        $this->assertEquals(count($result['data']['dataSource']), 2);
+        $this->assertStringStartsWith('{"success":true,"message":"","data":{"dataSource":[{"id":16', json_encode($result));
+    }
+
+    public function testRevisionAPIEmptyRecord()
+    {
+        $result = (new RevisionAPI())->listAPI('revision_test', 999);
+        $this->assertStringStartsWith('{"success":false,"message":"record is empty","data":[]}', json_encode($result));
     }
 }

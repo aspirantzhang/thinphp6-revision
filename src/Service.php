@@ -6,6 +6,6 @@ class Service extends \think\Service
 {
     public function boot()
     {
-        $this->app->bind('revision', RevisionQuery::class);
+        $this->app->bind('revision', RevisionAPI::class);
     }
 }

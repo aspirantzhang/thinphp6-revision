@@ -82,6 +82,7 @@ class Revision
 
     public function add(string $title)
     {
+        // TODO: catch exception
         $this->setTableData();
         $revisionId = $this->saveRevision($title);
         return $revisionId;
@@ -109,6 +110,7 @@ class Revision
 
     private function updateMainTableData()
     {
+        // TODO: catch exception
         Db::name($this->tableName)->where('id', $this->originalId)->update($this->getMainTableData());
     }
 
@@ -125,6 +127,7 @@ class Revision
 
     public function restore(int $revisionId)
     {
+        // TODO: catch exception
         $this->revisionId = $revisionId;
         $revisionData = $this->initRevisionData();
         if (false === $this->ifRevisionMathOriginal($revisionData)) {
