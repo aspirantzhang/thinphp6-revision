@@ -12,7 +12,7 @@ class RevisionAPI
     {
         $data = $this->getListData($tableName, $recordId, $page, $perPage);
 
-        if (empty($data)) {
+        if ($data['total'] === 0) {
             return [
                 'success' => false,
                 'message' => __('record is empty'),
@@ -48,14 +48,9 @@ class RevisionAPI
                 'page' => $page
             ])->toArray();
 
-
-        if ($list['total'] === 0) {
-            return [];
-        }
-
         return [
             'dataSource' => $list['data'] ?? $list['dataSource'] ?? [],
-            'total' => $list['total'],
+            'total' => $list['total'] ?? $list['pagination']['total'] ?? 0,
         ];
     }
 }
