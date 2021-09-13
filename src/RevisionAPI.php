@@ -10,9 +10,9 @@ class RevisionAPI
 {
     public function listAPI(string $tableName, int $recordId, int $page = 1, int $perPage = 5)
     {
-        $dataSource = $this->getListData($tableName, $recordId, $page, $perPage);
+        $data = $this->getListData($tableName, $recordId, $page, $perPage);
 
-        if (empty($dataSource)) {
+        if (empty($data)) {
             return [
                 'success' => false,
                 'message' => __('record is empty'),
@@ -24,7 +24,10 @@ class RevisionAPI
             'success' => true,
             'message' => '',
             'data' => [
-                'dataSource' => $dataSource,
+                'dataSource' => $data['dataSource'],
+                'meta' => [
+                    'total' => $data['total']
+                ]
             ]
         ];
     }
@@ -45,6 +48,14 @@ class RevisionAPI
                 'page' => $page
             ])->toArray();
 
-        return $list['data'] ?? $list['dataSource'] ?? [];
+
+        if ($list['total'] === 0) {
+            return [];
+        }
+
+        return [
+            'dataSource' => $list['data'] ?? $list['dataSource'] ?? [],
+            'total' => $list['total'],
+        ];
     }
 }
