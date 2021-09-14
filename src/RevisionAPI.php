@@ -26,7 +26,8 @@ class RevisionAPI
             'data' => [
                 'dataSource' => $data['dataSource'],
                 'meta' => [
-                    'total' => $data['total']
+                    'total' => $data['total'],
+                    'page' => $data['page'],
                 ]
             ]
         ];
@@ -51,6 +52,7 @@ class RevisionAPI
         return [
             'dataSource' => $list['data'] ?? $list['dataSource'] ?? [],
             'total' => $list['total'] ?? $list['pagination']['total'] ?? 0,
+            'page' => $list['current_page'] ?? $list['pagination']['page'] ?? 1,
         ];
     }
 }
