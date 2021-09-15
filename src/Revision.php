@@ -110,8 +110,10 @@ class Revision
 
     private function updateMainTableData()
     {
-        // TODO: catch exception
-        Db::name($this->tableName)->where('id', $this->originalId)->update($this->getMainTableData());
+        $effectRowsNumber = Db::name($this->tableName)->where('id', $this->originalId)->update($this->getMainTableData());
+        if ($effectRowsNumber === 0) {
+            throw new Exception(__('restore main table data failed'));
+        }
     }
 
     private function deleteOriginalI18nData()
@@ -121,21 +123,26 @@ class Revision
 
     private function insertI18nTableData()
     {
-        $num = Db::name($this->i18nTableName)->insertAll($this->getI18nTableData());
-        var_dump($num);
+        $insertTotal = Db::name($this->i18nTableName)->insertAll($this->getI18nTableData());
+        if ($insertTotal !== count($this->getI18nTableData())) {
+            throw new Exception(__('restore i18n table data failed'));
+        }
     }
 
     public function restore(int $revisionId)
     {
-        // TODO: catch exception
-        $this->revisionId = $revisionId;
-        $revisionData = $this->initRevisionData();
-        if (false === $this->ifRevisionMathOriginal($revisionData)) {
-            throw new Exception("The revision does not match the original record.");
+        try {
+            $this->revisionId = $revisionId;
+            $revisionData = $this->initRevisionData();
+            if (false === $this->ifRevisionMathOriginal($revisionData)) {
+                throw new Exception("The revision does not match the original record.");
+            }
+            $this->updateMainTableData();
+            $this->deleteOriginalI18nData();
+            $this->insertI18nTableData();
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
         }
-        $this->updateMainTableData();
-        $this->deleteOriginalI18nData();
-        $this->insertI18nTableData();
     }
 
     private function getAllColumnNamesWithoutId(array $record): array

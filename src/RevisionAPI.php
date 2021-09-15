@@ -5,9 +5,28 @@ declare(strict_types=1);
 namespace aspirantzhang\octopusRevision;
 
 use think\facade\Db;
+use think\Exception;
 
 class RevisionAPI
 {
+    public function restoreAPI(string $tableName, int $originalId, int $revisionId)
+    {
+        try {
+            (new Revision($tableName, $originalId))->restore($revisionId);
+            return [
+                'success' => true,
+                'message' => __('revision restore successfully'),
+                'data' => []
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ];
+        }
+    }
+
     public function listAPI(string $tableName, int $recordId, int $page = 1, int $perPage = 5)
     {
         $data = $this->getListData($tableName, $recordId, $page, $perPage);
