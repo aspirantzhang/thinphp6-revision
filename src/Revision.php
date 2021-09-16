@@ -15,6 +15,7 @@ class Revision
     private $revisionId;
     private $mainTableData;
     private $i18nTableData;
+    private $recordUpdateTime;
 
     public function __construct(string $tableName, int $originalId)
     {
@@ -44,6 +45,11 @@ class Revision
         $this->i18nTableData = json_encode($data);
     }
 
+    private function setRecordUpdateTime(string $time)
+    {
+        $this->recordUpdateTime = $time;
+    }
+
     private function getI18nTableData()
     {
         return json_decode($this->i18nTableData, true);
@@ -58,6 +64,7 @@ class Revision
     {
         $record = Db::table($this->tableName)->where('id', $this->originalId)->find();
         $this->setMainTableData($record);
+        $this->setRecordUpdateTime($record['update_time']);
 
         if ($this->i18nTableExists()) {
             $i18nRecord = Db::table($this->i18nTableName)->where('original_id', $this->originalId)->select()->toArray();
@@ -74,7 +81,7 @@ class Revision
             'title' => $title,
             'main_data' => $this->mainTableData,
             'i18n_data' => $this->i18nTableData,
-            'create_time' => $currentTime,
+            'create_time' => $this->recordUpdateTime,
             'update_time' => $currentTime
         ];
         return Db::name('revision')->insertGetId($data);
