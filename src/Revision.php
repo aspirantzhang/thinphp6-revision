@@ -117,10 +117,7 @@ class Revision
 
     private function updateMainTableData()
     {
-        $effectRowsNumber = Db::name($this->tableName)->where('id', $this->originalId)->update($this->getMainTableData());
-        if ($effectRowsNumber === 0) {
-            throw new Exception(__('restore main table data failed'));
-        }
+        Db::name($this->tableName)->where('id', $this->originalId)->update($this->getMainTableData());
     }
 
     private function deleteOriginalI18nData()
@@ -130,10 +127,7 @@ class Revision
 
     private function insertI18nTableData()
     {
-        $insertTotal = Db::name($this->i18nTableName)->insertAll($this->getI18nTableData());
-        if ($insertTotal !== count($this->getI18nTableData())) {
-            throw new Exception(__('restore i18n table data failed'));
-        }
+        Db::name($this->i18nTableName)->insertAll($this->getI18nTableData());
     }
 
     public function restore(int $revisionId)
