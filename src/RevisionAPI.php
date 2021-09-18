@@ -9,6 +9,23 @@ use think\Exception;
 
 class RevisionAPI
 {
+    public function readAPI(int $id)
+    {
+        $data = Db::table('revision')->where('id', (int)$id)->find();
+        if ($data) {
+            return [
+                'success' => true,
+                'message' => '',
+                'data' => $data
+            ];
+        }
+        return [
+            'success' => false,
+            'message' => __('get revision data failed'),
+            'data' => []
+        ];
+    }
+
     public function restoreAPI(string $tableName, int $originalId, int $revisionId)
     {
         try {
