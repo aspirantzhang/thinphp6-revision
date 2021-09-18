@@ -16,7 +16,9 @@ class RevisionAPI
             return [
                 'success' => true,
                 'message' => '',
-                'data' => $data
+                'data' => [
+                    'dataSource' => $data
+                ]
             ];
         }
         return [

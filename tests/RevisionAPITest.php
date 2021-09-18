@@ -72,7 +72,7 @@ class RevisionAPITest extends TestCase
     public function testReadAPISuccessfully()
     {
         $actual = (new RevisionAPI())->readAPI(1);
-        $this->assertEquals('{"success":true,"message":"","data":{"id":1,"table_name":"revision_test","original_id":100,"title":"revision_test_0","main_data":"[]","i18n_data":"[]","create_time":"2001-01-01 01:01:01","update_time":"2001-01-01 01:01:01","delete_time":null,"status":1}}', json_encode($actual));
+        $this->assertEquals('{"success":true,"message":"","data":{"dataSource":{"id":1,"table_name":"revision_test","original_id":100,"title":"revision_test_0","main_data":"[]","i18n_data":"[]","create_time":"2001-01-01 01:01:01","update_time":"2001-01-01 01:01:01","delete_time":null,"status":1}}}', json_encode($actual));
     }
 
     public function testReadAPIFailed()
