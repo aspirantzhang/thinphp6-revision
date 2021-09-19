@@ -15,9 +15,9 @@ class RevisionAPITest extends TestCase
         $moreRecords = [];
         for ($i = 0; $i < 20; $i++) {
             $moreRecords[] = [
-                'table_name' => 'revision_test',
+                'table_name' => 'user',
                 'original_id' => 100,
-                'title' => 'revision_test_' . $i,
+                'title' => 'user_' . $i,
                 'main_data' => '[]',
                 'i18n_data' => '[]',
                 'create_time' => $time,
@@ -29,20 +29,20 @@ class RevisionAPITest extends TestCase
 
     public function testListAPIDefaultPage()
     {
-        $result = (new RevisionAPI())->listAPI('revision_test', 100);
-        $this->assertStringStartsWith('{"success":true,"message":"","data":{"dataSource":[{"id":20,"table_name":"revision_test","original_id":100,"title":"revision_test_19"', json_encode($result));
+        $result = (new RevisionAPI())->listAPI('user', 100);
+        $this->assertStringStartsWith('{"success":true,"message":"","data":{"dataSource":[{"id":20,"table_name":"user","original_id":100,"title":"user_19"', json_encode($result));
     }
 
     public function testListAPISpecificPageAndPerPage()
     {
-        $result = (new RevisionAPI())->listAPI('revision_test', 100, 3, 2);
+        $result = (new RevisionAPI())->listAPI('user', 100, 3, 2);
         $this->assertEquals(count($result['data']['dataSource']), 2);
         $this->assertStringStartsWith('{"success":true,"message":"","data":{"dataSource":[{"id":16', json_encode($result));
     }
 
     public function testListAPIEmptyRecord()
     {
-        $result = (new RevisionAPI())->listAPI('revision_test', 999);
+        $result = (new RevisionAPI())->listAPI('user', 999);
         $this->assertStringStartsWith('{"success":false,"message":"record is empty","data":[]}', json_encode($result));
     }
 
@@ -50,13 +50,13 @@ class RevisionAPITest extends TestCase
     {
         // insert main table
         $time = '2001-01-01 01:01:01';
-        $mainId = Db::name('revision_test')->insertGetId([
+        $mainId = Db::name('user')->insertGetId([
             'username' => 'not restore',
             'create_time' => $time,
             'update_time' => $time,
         ]);
         $revisionId = Db::name('revision')->insertGetId([
-            'table_name' => 'revision_test',
+            'table_name' => 'user',
             'original_id' => $mainId,
             'title' => 'restore unit test',
             'main_data' => '{"username":"RestoreAPI","create_time":"2001-01-01 01:01:01","update_time":"2001-01-01 01:01:01","delete_time":null,"status":1}',
@@ -65,14 +65,14 @@ class RevisionAPITest extends TestCase
             'update_time' => $time,
         ]);
 
-        $result = (new RevisionAPI())->restoreAPI('revision_test', (int)$mainId, (int)$revisionId);
+        $result = (new RevisionAPI())->restoreAPI('user', (int)$mainId, (int)$revisionId);
         $this->assertEquals('{"success":true,"message":"revision restore successfully","data":[]}', json_encode($result));
     }
 
     public function testReadAPISuccessfully()
     {
         $actual = (new RevisionAPI())->readAPI(1);
-        $this->assertEquals('{"success":true,"message":"","data":{"dataSource":{"id":1,"table_name":"revision_test","original_id":100,"title":"revision_test_0","main_data":"[]","i18n_data":"[]","create_time":"2001-01-01 01:01:01","update_time":"2001-01-01 01:01:01","delete_time":null,"status":1}}}', json_encode($actual));
+        $this->assertEquals('{"success":true,"message":"","data":{"dataSource":{"id":1,"table_name":"user","original_id":100,"title":"user_0","main_data":"[]","i18n_data":"[]","create_time":"2001-01-01 01:01:01","update_time":"2001-01-01 01:01:01","delete_time":null,"status":1}}}', json_encode($actual));
     }
 
     public function testReadAPIFailed()

@@ -10,7 +10,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
     public static function setUpBeforeClass(): void
     {
-        Db::execute('DROP TABLE IF EXISTS `revision`, `revision_test`, `revision_test_i18n`');
+        Db::execute('DROP TABLE IF EXISTS `revision`, `user`, `user_i18n`');
         Db::execute(<<<END
 CREATE TABLE `revision` (
  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -29,7 +29,7 @@ CREATE TABLE `revision` (
 END
         );
         Db::execute(<<<END
-CREATE TABLE `revision_test` (
+CREATE TABLE `user` (
  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
  `username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
  `create_time` datetime NOT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE `revision_test` (
 END
         );
         Db::execute(<<<END
-CREATE TABLE `revision_test_i18n` (
+CREATE TABLE `user_i18n` (
  `_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
  `original_id` int(11) unsigned NOT NULL,
  `lang_code` char(5) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
