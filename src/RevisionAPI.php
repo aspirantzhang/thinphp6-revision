@@ -31,7 +31,7 @@ class RevisionAPI
     public function restoreAPI(string $tableName, int $originalId, int $revisionId)
     {
         try {
-            (new Revision($tableName, $originalId))->add('Auto save before restore');
+            (new Revision($tableName, $originalId))->add('restore (autosave)');
             (new Revision($tableName, $originalId))->restore($revisionId);
             return [
                 'success' => true,
