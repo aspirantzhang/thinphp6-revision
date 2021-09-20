@@ -128,7 +128,7 @@ class RevisionTest extends TestCase
         $record = Db::table('revision')->where('id', $revisionId)->find();
         $this->assertEquals('extra indexed', $record['title']);
         $this->assertEquals('{"username":"extra-test","create_time":"2001-01-01 01:01:01","update_time":"2001-01-01 01:01:01","delete_time":null,"status":1}', $record['main_data']);
-        $this->assertEquals('{"user_group":[{"id":2,"user_id":3,"group_id":1},{"id":3,"user_id":3,"group_id":2}]}', $record['extra_data']);
+        $this->assertEquals('{"user_group":[{"user_id":3,"group_id":1},{"user_id":3,"group_id":2}]}', $record['extra_data']);
     }
 
     public function testRevisionHasExtraWithAssociativeArray()
@@ -138,6 +138,6 @@ class RevisionTest extends TestCase
         $record = Db::table('revision')->where('id', $revisionId)->find();
         $this->assertEquals('extra associative', $record['title']);
         $this->assertEquals('{"username":"extra-test","create_time":"2001-01-01 01:01:01","update_time":"2001-01-01 01:01:01","delete_time":null,"status":1}', $record['main_data']);
-        $this->assertEquals('{"user_profile":[{"id":2,"user_key":3,"group_id":1}],"user_group":[{"id":2,"user_id":3,"group_id":1},{"id":3,"user_id":3,"group_id":2}]}', $record['extra_data']);
+        $this->assertEquals('{"user_profile":[{"user_key":3,"group_id":1}],"user_group":[{"user_id":3,"group_id":1},{"user_id":3,"group_id":2}]}', $record['extra_data']);
     }
 }

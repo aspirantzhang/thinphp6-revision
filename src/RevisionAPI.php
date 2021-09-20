@@ -28,11 +28,11 @@ class RevisionAPI
         ];
     }
 
-    public function restoreAPI(string $tableName, int $originalId, int $revisionId)
+    public function restoreAPI(string $tableName, int $originalId, int $revisionId, array $extra = [])
     {
         try {
-            (new Revision($tableName, $originalId))->add('restore (autosave)');
-            (new Revision($tableName, $originalId))->restore($revisionId);
+            (new Revision($tableName, $originalId, $extra))->add('restore (autosave)');
+            (new Revision($tableName, $originalId, $extra))->restore($revisionId);
             return [
                 'success' => true,
                 'message' => __('revision restore successfully'),

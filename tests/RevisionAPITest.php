@@ -71,6 +71,36 @@ class RevisionAPITest extends TestCase
         $this->assertEquals('{"success":true,"message":"revision restore successfully","data":[]}', json_encode($result));
     }
 
+    public function testRestoreAPIWithExtraTable()
+    {
+        // insert main table
+        $time = '2001-01-01 01:01:01';
+        $mainId = Db::name('user')->insertGetId([
+            'id' => 110,
+            'username' => 'not restore with extra',
+            'create_time' => $time,
+            'update_time' => $time,
+        ]);
+        $revisionId = Db::name('revision')->insertGetId([
+            'table_name' => 'user',
+            'original_id' => $mainId,
+            'title' => 'restore with extra',
+            'main_data' => '{"username":"RestoreWithExtra","create_time":"2001-01-01 01:01:01","update_time":"2001-01-01 01:01:01","delete_time":null,"status":1}',
+            'i18n_data' => '[]',
+            'extra_data' => '{"user_profile":[{"user_key":' . $mainId . ',"group_id":1}],"user_group":[{"user_id":' . $mainId . ',"group_id":1},{"user_id":' . $mainId . ',"group_id":2}]}',
+            'create_time' => $time,
+            'update_time' => $time,
+        ]);
+
+        $result = (new RevisionAPI())->restoreAPI('user', (int)$mainId, (int)$revisionId, ['user_group' => 'user_id', 'user_profile' => 'user_key']);
+        $this->assertEquals('{"success":true,"message":"revision restore successfully","data":[]}', json_encode($result));
+        $groupRecord = Db::table('user_group')->where('user_id', $mainId)->select()->toArray();
+        $this->assertEquals($groupRecord[0]['group_id'], 1);
+        $this->assertEquals($groupRecord[1]['group_id'], 2);
+        $profileRecord = Db::table('user_profile')->where('user_key', $mainId)->select()->toArray();
+        $this->assertEquals($profileRecord[0]['group_id'], 1);
+    }
+
     public function testReadAPISuccessfully()
     {
         $actual = (new RevisionAPI())->readAPI(1);

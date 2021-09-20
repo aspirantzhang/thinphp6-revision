@@ -59,6 +59,11 @@ class Revision
         return json_decode($this->i18nTableData, true);
     }
 
+    private function getExtraTableData()
+    {
+        return json_decode($this->extraTableData, true);
+    }
+
     private function i18nTableExists(): bool
     {
         return $this->tableExists($this->i18nTableName);
@@ -73,13 +78,21 @@ class Revision
         if (isAssocArray($this->extra)) {
             foreach ($this->extra as $tableName => $idFieldName) {
                 if ($this->tableExists($tableName)) {
-                    $result[$tableName] = Db::table($tableName)->where($idFieldName, $this->originalId)->select()->toArray();
+                    $record = Db::table($tableName)->where($idFieldName, $this->originalId)->select()->toArray();
+                    foreach ($record as &$arr) {
+                        unset($arr['id']);
+                    }
+                    $result[$tableName] = $record;
                 }
             }
         } else {
             $idFieldName = $this->tableName . '_id';
             foreach ($this->extra as $tableName) {
-                $result[$tableName] = Db::table($tableName)->where($idFieldName, $this->originalId)->select()->toArray();
+                $record = Db::table($tableName)->where($idFieldName, $this->originalId)->select()->toArray();
+                foreach ($record as &$arr) {
+                    unset($arr['id']);
+                }
+                $result[$tableName] = $record;
             }
         }
         $this->extraTableData = json_encode($result);
@@ -130,6 +143,7 @@ class Revision
         if ($revision) {
             $this->mainTableData = $revision['main_data'];
             $this->i18nTableData = $revision['i18n_data'];
+            $this->extraTableData = $revision['extra_data'];
             return [
                 'tableName' => $revision['table_name'],
                 'originalId' => $revision['original_id'],
@@ -154,9 +168,34 @@ class Revision
         Db::table($this->i18nTableName)->where('original_id', $this->originalId)->delete();
     }
 
+    private function deleteOriginalExtraTableData()
+    {
+        if (!empty($this->extra)) {
+            if (isAssocArray($this->extra)) {
+                foreach ($this->extra as $tableName => $idFieldName) {
+                    Db::table($tableName)->where($idFieldName, $this->originalId)->delete();
+                }
+            } else {
+                $idFieldName = $this->tableName . '_id';
+                foreach ($this->extra as $tableName) {
+                    Db::table($tableName)->where($idFieldName, $this->originalId)->delete();
+                }
+            }
+        }
+    }
+
     private function insertI18nTableData()
     {
         Db::name($this->i18nTableName)->insertAll($this->getI18nTableData());
+    }
+
+    private function insertExtraTableData()
+    {
+        if (!empty($this->extra) && !empty($this->getExtraTableData())) {
+            foreach ($this->getExtraTableData() as $tableName => $records) {
+                Db::name($tableName)->insertAll($records);
+            }
+        }
     }
 
     public function restore(int $revisionId)
@@ -170,6 +209,8 @@ class Revision
             $this->updateMainTableData();
             $this->deleteOriginalI18nData();
             $this->insertI18nTableData();
+            $this->deleteOriginalExtraTableData();
+            $this->insertExtraTableData();
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
