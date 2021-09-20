@@ -28,6 +28,38 @@ class RevisionAPITest extends TestCase
         Db::name('revision')->insertAll($moreRecords);
     }
 
+    public function testSaveAPI()
+    {
+        $time = date('Y-m-d H:i:s');
+        $addRecordId = Db::name('user')->insertGetId([
+            'username' => 'unit-test',
+            'create_time' => $time,
+            'update_time' => $time,
+        ]);
+        Db::name('user_i18n')->insertAll(
+            [
+                [
+                    'original_id' => $addRecordId,
+                    'display_name' => 'Unit Test',
+                    'lang_code' => 'en-us',
+                    'translate_time' => $time,
+                ],
+                [
+                    'original_id' => $addRecordId,
+                    'display_name' => '单元测试',
+                    'lang_code' => 'zh-cn',
+                    'translate_time' => $time,
+                ],
+            ]
+        );
+        $revisionId = (new RevisionAPI())->saveAPI('save test', 'user', (int)$addRecordId);
+        $result = Db::table('revision')->where('id', $revisionId)->find();
+        $this->assertEquals('user', $result['table_name']);
+        $this->assertEquals('save test', $result['title']);
+        $this->assertStringStartsWith('{"username":"unit-test",', $result['main_data']);
+        $this->assertStringStartsWith('[{"original_id":' . $addRecordId . ',"lang_code":"en-us"', $result['i18n_data']);
+    }
+
     public function testListAPIDefaultPage()
     {
         $result = (new RevisionAPI())->listAPI('user', 100);

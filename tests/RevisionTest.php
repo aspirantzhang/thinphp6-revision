@@ -101,7 +101,7 @@ class RevisionTest extends TestCase
     public function testAddSuccessfully()
     {
         $revision = new Revision('user', 1);
-        $revisionId = $revision->add('unit test');
+        $revisionId = $revision->save('unit test');
         $revisionRecord = Db::table('revision')->where('id', $revisionId)->find();
         $this->assertEquals('user', $revisionRecord['table_name']);
         $this->assertEquals(1, $revisionRecord['original_id']);
@@ -124,7 +124,7 @@ class RevisionTest extends TestCase
     public function testRevisionHasExtraWithIndexedArray()
     {
         $revision = new Revision('user', (int)self::$extraRevisionId, ['user_group']);
-        $revisionId = $revision->add('extra indexed');
+        $revisionId = $revision->save('extra indexed');
         $record = Db::table('revision')->where('id', $revisionId)->find();
         $this->assertEquals('extra indexed', $record['title']);
         $this->assertEquals('{"username":"extra-test","create_time":"2001-01-01 01:01:01","update_time":"2001-01-01 01:01:01","delete_time":null,"status":1}', $record['main_data']);
@@ -134,7 +134,7 @@ class RevisionTest extends TestCase
     public function testRevisionHasExtraWithAssociativeArray()
     {
         $revision = new Revision('user', (int)self::$extraRevisionId, ['user_profile' => 'user_key', 'user_group' => 'user_id']);
-        $revisionId = $revision->add('extra associative');
+        $revisionId = $revision->save('extra associative');
         $record = Db::table('revision')->where('id', $revisionId)->find();
         $this->assertEquals('extra associative', $record['title']);
         $this->assertEquals('{"username":"extra-test","create_time":"2001-01-01 01:01:01","update_time":"2001-01-01 01:01:01","delete_time":null,"status":1}', $record['main_data']);

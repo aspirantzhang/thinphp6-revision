@@ -9,6 +9,11 @@ use think\Exception;
 
 class RevisionAPI
 {
+    public function saveAPI(string $title, string $tableName, int $originalId, array $extra = [])
+    {
+        return (new Revision($tableName, (int)$originalId, $extra))->save($title);
+    }
+
     public function readAPI(int $id)
     {
         $data = Db::table('revision')->where('id', (int)$id)->find();
@@ -31,7 +36,7 @@ class RevisionAPI
     public function restoreAPI(string $tableName, int $originalId, int $revisionId, array $extra = [])
     {
         try {
-            (new Revision($tableName, $originalId, $extra))->add('restore (autosave)');
+            (new Revision($tableName, $originalId, $extra))->save('restore (autosave)');
             (new Revision($tableName, $originalId, $extra))->restore($revisionId);
             return [
                 'success' => true,

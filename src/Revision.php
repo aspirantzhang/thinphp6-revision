@@ -126,15 +126,22 @@ class Revision
             'create_time' => $this->recordUpdateTime,
             'update_time' => $currentTime
         ];
-        return Db::name('revision')->insertGetId($data);
+        try {
+            return Db::name('revision')->insertGetId($data);
+        } catch (Exception $e) {
+            throw new Exception(__('write revision data failed'));
+        }
     }
 
-    public function add(string $title)
+    public function save(string $title)
     {
-        // TODO: catch exception
-        $this->setTableData();
-        $revisionId = $this->saveRevision($title);
-        return $revisionId;
+        try {
+            $this->setTableData();
+            $revisionId = $this->saveRevision($title);
+            return $revisionId;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
     }
 
     private function initRevisionData()
