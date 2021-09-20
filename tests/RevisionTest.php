@@ -10,18 +10,19 @@ class RevisionTest extends TestCase
 {
     private static $restoreRecordId;
     private static $restoreRevisionId;
+    private static $extraRevisionId;
 
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
         $time = '2001-01-01 01:01:01';
         // add
-        $addRecordId = Db::name('revision_test')->insertGetId([
+        $addRecordId = Db::name('user')->insertGetId([
             'username' => 'unit-test',
             'create_time' => $time,
             'update_time' => $time,
         ]);
-        Db::name('revision_test_i18n')->insertAll(
+        Db::name('user_i18n')->insertAll(
             [
                 [
                     'original_id' => $addRecordId,
@@ -38,12 +39,12 @@ class RevisionTest extends TestCase
             ]
         );
         // restore
-        self::$restoreRecordId = Db::name('revision_test')->insertGetId([
+        self::$restoreRecordId = Db::name('user')->insertGetId([
             'username' => 'not restore',
             'create_time' => $time,
             'update_time' => $time,
         ]);
-        Db::name('revision_test_i18n')->insertAll(
+        Db::name('user_i18n')->insertAll(
             [
                 [
                     'original_id' => self::$restoreRecordId,
@@ -60,22 +61,49 @@ class RevisionTest extends TestCase
             ]
         );
         self::$restoreRevisionId = Db::name('revision')->insertGetId([
-            'table_name' => 'revision_test',
+            'table_name' => 'user',
             'original_id' => self::$restoreRecordId,
             'title' => 'restore unit test',
             'main_data' => '{"username":"restore-test","create_time":"2001-01-01 01:01:01","update_time":"2001-01-01 01:01:01","delete_time":null,"status":1}',
             'i18n_data' => '[{"original_id":' . self::$restoreRecordId . ',"lang_code":"en-us","display_name":"Restore Test","translate_time":"2001-01-01 01:01:01"},{"original_id":' . self::$restoreRecordId . ',"lang_code":"zh-cn","display_name":"\u6062\u590d\u6d4b\u8bd5","translate_time":"2001-01-01 01:01:01"}]',
+            'extra_data' => '[]',
             'create_time' => $time,
             'update_time' => $time,
         ]);
+        // extra
+        self::$extraRevisionId = Db::name('user')->insertGetId([
+            'username' => 'extra-test',
+            'create_time' => $time,
+            'update_time' => $time,
+        ]);
+        Db::name('user_group')->insertAll(
+            [
+                [
+                    'user_id' => self::$extraRevisionId,
+                    'group_id' => 1,
+                ],
+                [
+                    'user_id' => self::$extraRevisionId,
+                    'group_id' => 2,
+                ],
+            ]
+        );
+        Db::name('user_profile')->insertAll(
+            [
+                [
+                    'user_key' => self::$extraRevisionId,
+                    'group_id' => 1,
+                ],
+            ]
+        );
     }
 
     public function testAddSuccessfully()
     {
-        $revision = new Revision('revision_test', 1);
+        $revision = new Revision('user', 1);
         $revisionId = $revision->add('unit test');
         $revisionRecord = Db::table('revision')->where('id', $revisionId)->find();
-        $this->assertEquals('revision_test', $revisionRecord['table_name']);
+        $this->assertEquals('user', $revisionRecord['table_name']);
         $this->assertEquals(1, $revisionRecord['original_id']);
         $this->assertEquals('unit test', $revisionRecord['title']);
         $this->assertEquals('{"username":"unit-test","create_time":"2001-01-01 01:01:01","update_time":"2001-01-01 01:01:01","delete_time":null,"status":1}', $revisionRecord['main_data']);
@@ -85,11 +113,31 @@ class RevisionTest extends TestCase
 
     public function testRestoreSuccessfully()
     {
-        $revision = new Revision('revision_test', (int)self::$restoreRecordId);
+        $revision = new Revision('user', (int)self::$restoreRecordId);
         $revision->restore((int)self::$restoreRevisionId);
-        $restoreRecord = Db::table('revision_test')->where('id', self::$restoreRecordId)->find();
+        $restoreRecord = Db::table('user')->where('id', self::$restoreRecordId)->find();
         $this->assertEquals('restore-test', $restoreRecord['username']);
-        $restoreI18nRecord = Db::table('revision_test_i18n')->where('original_id', self::$restoreRecordId)->select();
+        $restoreI18nRecord = Db::table('user_i18n')->where('original_id', self::$restoreRecordId)->select();
         $this->assertEquals('[{"_id":5,"original_id":2,"lang_code":"en-us","display_name":"Restore Test","translate_time":"2001-01-01 01:01:01"},{"_id":6,"original_id":2,"lang_code":"zh-cn","display_name":"\u6062\u590d\u6d4b\u8bd5","translate_time":"2001-01-01 01:01:01"}]', json_encode($restoreI18nRecord));
+    }
+
+    public function testRevisionHasExtraWithIndexedArray()
+    {
+        $revision = new Revision('user', (int)self::$extraRevisionId, ['user_group']);
+        $revisionId = $revision->add('extra indexed');
+        $record = Db::table('revision')->where('id', $revisionId)->find();
+        $this->assertEquals('extra indexed', $record['title']);
+        $this->assertEquals('{"username":"extra-test","create_time":"2001-01-01 01:01:01","update_time":"2001-01-01 01:01:01","delete_time":null,"status":1}', $record['main_data']);
+        $this->assertEquals('{"user_group":[{"user_id":3,"group_id":1},{"user_id":3,"group_id":2}]}', $record['extra_data']);
+    }
+
+    public function testRevisionHasExtraWithAssociativeArray()
+    {
+        $revision = new Revision('user', (int)self::$extraRevisionId, ['user_profile' => 'user_key', 'user_group' => 'user_id']);
+        $revisionId = $revision->add('extra associative');
+        $record = Db::table('revision')->where('id', $revisionId)->find();
+        $this->assertEquals('extra associative', $record['title']);
+        $this->assertEquals('{"username":"extra-test","create_time":"2001-01-01 01:01:01","update_time":"2001-01-01 01:01:01","delete_time":null,"status":1}', $record['main_data']);
+        $this->assertEquals('{"user_profile":[{"user_key":3,"group_id":1}],"user_group":[{"user_id":3,"group_id":1},{"user_id":3,"group_id":2}]}', $record['extra_data']);
     }
 }

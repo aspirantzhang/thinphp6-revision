@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/aspirantzhang/octopus-helper.git",
-                "reference": "47b72d08a7081b4b6a006daf3210d33a8d637eb7"
+                "reference": "45440b5d2f7ac3d757b9a7a8abc441de11c022b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aspirantzhang/octopus-helper/zipball/47b72d08a7081b4b6a006daf3210d33a8d637eb7",
-                "reference": "47b72d08a7081b4b6a006daf3210d33a8d637eb7",
+                "url": "https://api.github.com/repos/aspirantzhang/octopus-helper/zipball/45440b5d2f7ac3d757b9a7a8abc441de11c022b6",
+                "reference": "45440b5d2f7ac3d757b9a7a8abc441de11c022b6",
                 "shasum": ""
             },
             "require": {
@@ -51,7 +51,7 @@
                 "issues": "https://github.com/aspirantzhang/octopus-helper/issues",
                 "source": "https://github.com/aspirantzhang/octopus-helper/tree/main"
             },
-            "time": "2021-07-28T11:34:38+00:00"
+            "time": "2021-09-19T13:39:36+00:00"
         },
         {
             "name": "league/flysystem",
