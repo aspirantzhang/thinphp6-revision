@@ -139,7 +139,7 @@ class Revision
         return [];
     }
 
-    private function ifRevisionMathOriginal(array $revisionData): bool
+    private function ifRevisionMatchOriginal(array $revisionData): bool
     {
         return ($revisionData['tableName'] === $this->tableName) && ($revisionData['originalId'] === $this->originalId);
     }
@@ -164,7 +164,7 @@ class Revision
         try {
             $this->revisionId = $revisionId;
             $revisionData = $this->initRevisionData();
-            if (false === $this->ifRevisionMathOriginal($revisionData)) {
+            if (false === $this->ifRevisionMatchOriginal($revisionData)) {
                 throw new Exception("The revision does not match the original record.");
             }
             $this->updateMainTableData();
