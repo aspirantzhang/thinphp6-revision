@@ -16,14 +16,18 @@ class Revision
     private $mainTableData;
     private $i18nTableData;
     private $recordUpdateTime;
+    private $extra;
+    private $extraTableData;
 
-    public function __construct(string $tableName, int $originalId)
+    public function __construct(string $tableName, int $originalId, array $extra = [])
     {
         $this->tableName = $tableName;
         $this->i18nTableName = $tableName . '_i18n';
         $this->originalId = (int)$originalId;
         $this->mainTableData = '[]';
         $this->i18nTableData = '[]';
+        $this->extraTableData = '[]';
+        $this->extra = $extra;
     }
 
     private function setMainTableData(array $data)
@@ -60,16 +64,40 @@ class Revision
         return $this->tableExists($this->i18nTableName);
     }
 
+    private function setExtraTableData()
+    {
+        if (empty($this->extra)) {
+            return;
+        }
+        $result = [];
+        if (isAssocArray($this->extra)) {
+            foreach ($this->extra as $tableName => $idFieldName) {
+                if ($this->tableExists($tableName)) {
+                    $result[$tableName] = Db::table($tableName)->where($idFieldName, $this->originalId)->select()->toArray();
+                }
+            }
+        } else {
+            $idFieldName = $this->tableName . '_id';
+            foreach ($this->extra as $tableName) {
+                $result[$tableName] = Db::table($tableName)->where($idFieldName, $this->originalId)->select()->toArray();
+            }
+        }
+        $this->extraTableData = json_encode($result);
+    }
+
     private function setTableData(): void
     {
+        // main table
         $record = Db::table($this->tableName)->where('id', $this->originalId)->find();
         $this->setMainTableData($record);
         $this->setRecordUpdateTime($record['update_time']);
-
+        // i18n table
         if ($this->i18nTableExists()) {
             $i18nRecord = Db::table($this->i18nTableName)->where('original_id', $this->originalId)->select()->toArray();
             $this->setI18nTableData($i18nRecord);
         }
+        // extra table
+        $this->setExtraTableData();
     }
 
     private function saveRevision(string $title)
@@ -81,6 +109,7 @@ class Revision
             'title' => $title,
             'main_data' => $this->mainTableData,
             'i18n_data' => $this->i18nTableData,
+            'extra_data' => $this->extraTableData,
             'create_time' => $this->recordUpdateTime,
             'update_time' => $currentTime
         ];

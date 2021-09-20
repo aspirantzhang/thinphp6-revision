@@ -10,7 +10,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
     public static function setUpBeforeClass(): void
     {
-        Db::execute('DROP TABLE IF EXISTS `revision`, `user`, `user_i18n`');
+        Db::execute('DROP TABLE IF EXISTS `revision`, `user`, `user_i18n`, `user_group`, `user_profile`');
         Db::execute(<<<END
 CREATE TABLE `revision` (
  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -19,6 +19,7 @@ CREATE TABLE `revision` (
  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
  `main_data` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
  `i18n_data` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+ `extra_data` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
  `create_time` datetime NOT NULL,
  `update_time` datetime NOT NULL,
  `delete_time` datetime DEFAULT NULL,
@@ -50,6 +51,28 @@ CREATE TABLE `user_i18n` (
  PRIMARY KEY (`_id`),
  UNIQUE KEY `original_id` (`original_id`,`lang_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+END
+        );
+        Db::execute(<<<END
+CREATE TABLE `user_group` (
+ `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+ `user_id` int(11) unsigned NOT NULL,
+ `group_id` int(11) unsigned NOT NULL,
+ PRIMARY KEY (`id`),
+ KEY `user_id` (`user_id`),
+ KEY `group_id` (`group_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+END
+        );
+        Db::execute(<<<END
+CREATE TABLE `user_profile` (
+ `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+ `user_key` int(11) unsigned NOT NULL,
+ `group_id` int(11) unsigned NOT NULL,
+ PRIMARY KEY (`id`),
+ KEY `user_key` (`user_key`),
+ KEY `group_id` (`group_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 END
         );
     }

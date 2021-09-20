@@ -20,6 +20,7 @@ class RevisionAPITest extends TestCase
                 'title' => 'user_' . $i,
                 'main_data' => '[]',
                 'i18n_data' => '[]',
+                'extra_data' => '[]',
                 'create_time' => $time,
                 'update_time' => $time,
             ];
@@ -61,6 +62,7 @@ class RevisionAPITest extends TestCase
             'title' => 'restore unit test',
             'main_data' => '{"username":"RestoreAPI","create_time":"2001-01-01 01:01:01","update_time":"2001-01-01 01:01:01","delete_time":null,"status":1}',
             'i18n_data' => '[{"original_id":' . $mainId . ',"lang_code":"en-us","display_name":"Restore Test","translate_time":"2001-01-01 01:01:01"},{"original_id":' . $mainId . ',"lang_code":"zh-cn","display_name":"\u6062\u590d\u6d4b\u8bd5","translate_time":"2001-01-01 01:01:01"}]',
+            'extra_data' => '[]',
             'create_time' => $time,
             'update_time' => $time,
         ]);
@@ -72,7 +74,7 @@ class RevisionAPITest extends TestCase
     public function testReadAPISuccessfully()
     {
         $actual = (new RevisionAPI())->readAPI(1);
-        $this->assertEquals('{"success":true,"message":"","data":{"dataSource":{"id":1,"table_name":"user","original_id":100,"title":"user_0","main_data":"[]","i18n_data":"[]","create_time":"2001-01-01 01:01:01","update_time":"2001-01-01 01:01:01","delete_time":null,"status":1}}}', json_encode($actual));
+        $this->assertEquals('{"success":true,"message":"","data":{"dataSource":{"id":1,"table_name":"user","original_id":100,"title":"user_0","main_data":"[]","i18n_data":"[]","extra_data":"[]","create_time":"2001-01-01 01:01:01","update_time":"2001-01-01 01:01:01","delete_time":null,"status":1}}}', json_encode($actual));
     }
 
     public function testReadAPIFailed()
