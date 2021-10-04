@@ -8,7 +8,7 @@ use think\facade\Config;
 
 trait Revision
 {
-    protected function getRevisionTable()
+    public function getRevisionTable()
     {
         $this->loadModelConfig();
         return Config::get($this->getModelName() . '.revisionTable') ?: [];
