@@ -36,7 +36,7 @@ class Home extends Command
         if ($result['success'] === true) {
             $list = $result['data']['dataSource'];
             foreach ($list as $item) {
-                $output->writeln('<comment> - [' . $item['id'] . ']' . $item['title'] . ' @ ' . $item['create_time'] . '</comment>');
+                $output->writeln('<comment> - [' . $item['id'] . '] ' . $item['title'] . ' @ ' . $item['create_time'] . '</comment>');
             }
         } else {
             $output->writeln('<error>' . $result['message'] . '</error>');
