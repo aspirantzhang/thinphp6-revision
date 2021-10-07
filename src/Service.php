@@ -10,6 +10,7 @@ class Service extends \think\Service
         $this->commands([
             'revision:save' => command\Save::class,
             'revision:restore' => command\Restore::class,
+            'revision:read' => command\Read::class,
         ]);
     }
 }
