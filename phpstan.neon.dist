@@ -4,4 +4,4 @@ parameters:
     - src
   ignoreErrors:
     - '#Call to an undefined static method think\\facade\\Db::query\(\)#'
-    - '#Method aspirantzhang\\octopusRevision\\command\\Save::execute\(\) should return int\|null but return statement is missing.#'
+    - '#Method aspirantzhang\\octopusRevision\\command\\[a-zA-Z0-9\\_]+::execute\(\) should return int\|null but return statement is missing.#'
