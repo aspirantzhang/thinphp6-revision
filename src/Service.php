@@ -9,6 +9,7 @@ class Service extends \think\Service
         $this->app->bind('revision', RevisionAPI::class);
         $this->commands([
             'revision:save' => command\Save::class,
+            'revision:restore' => command\Restore::class,
         ]);
     }
 }
