@@ -1,5 +1,6 @@
 ignore:
   - "src/Service.php"
   - "src/traits"
+  - "src/command"
 coverage:
   range: "60...90"

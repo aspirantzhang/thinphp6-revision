@@ -25,6 +25,7 @@
         <exclude>
             <file>Service.php</file>
             <directory>traits</directory>
+            <directory>command</directory>
         </exclude>
     </coverage>
 </phpunit>

@@ -20,6 +20,13 @@
       "aspirantzhang\\octopusRevision\\": "tests"
     }
   },
+  "extra": {
+    "think": {
+      "services": [
+        "aspirantzhang\\octopusRevision\\Service"
+      ]
+    }
+  },
   "minimum-stability": "stable",
   "require": {
     "php": ">=7.4.0",
@@ -31,12 +38,5 @@
     "phpunit/phpunit": "^9.5",
     "mockery/mockery": "^1.4",
     "phpstan/phpstan": "^0.12.93"
-  },
-  "extra": {
-    "think": {
-      "services": [
-        "aspirantzhang\\octopusRevision\\Service"
-      ]
-    }
   }
 }
