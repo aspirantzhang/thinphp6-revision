@@ -29,10 +29,10 @@ class Home extends Command
 
         $tableName = trim($input->getArgument('tableName'));
         $recordId = trim($input->getArgument('recordId'));
-        $page = $input->getArgument('page') ? (int)trim($input->getArgument('page')) : null;
-        $perPage = $input->getArgument('perPage') ? (int)trim($input->getArgument('perPage')) : null;
+        $page = $input->getArgument('page') ? (int)trim($input->getArgument('page')) : 1;
+        $perPage = $input->getArgument('perPage') ? (int)trim($input->getArgument('perPage')) : 5;
 
-        $result = (new RevisionAPI())->listAPI($tableName, (int)$recordId, $page, $perPage);
+        $result = (new RevisionAPI())->listAPI($tableName, (int)$recordId, (int)$page, (int)$perPage);
         if ($result['success'] === true) {
             $list = $result['data']['dataSource'];
             foreach ($list as $item) {
