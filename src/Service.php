@@ -11,6 +11,7 @@ class Service extends \think\Service
             'revision:save' => command\Save::class,
             'revision:restore' => command\Restore::class,
             'revision:read' => command\Read::class,
+            'revision:list' => command\Home::class,
         ]);
     }
 }
